@@ -309,7 +309,7 @@ export default {
       if (path === "/") {
         return json({
           name: "STRIKEPOINT",
-          version: "1.0.0 Beta",
+          version: "1.0.1 Beta",
           status: "online",
           accounts: Boolean(env.DB),
           multiplayer: Boolean(env.ROOMS)

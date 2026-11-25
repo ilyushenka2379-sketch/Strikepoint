@@ -14,4 +14,4 @@ new_sqlite_classes = ["GameRoom"]
 [[d1_databases]]
 binding = "DB"
 database_name = "strikepoint-db"
-database_id = "ВСТАВЬ_DATABASE_ID"
+database_id = "235b6540-95e3-434e-8a84-fdfe5887cd0b"

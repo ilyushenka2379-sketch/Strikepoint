@@ -47,7 +47,7 @@ function updateGrenades(dt,now){for(let i=projectiles.length-1;i>=0;i--){let p=p
 
 const exitSlots=$('exit').onclick;$('exit').onclick=()=>{c4View37.visible=false;action36.style.display='none';pistol.visible=heldGrenade.visible=false;for(const p of projectiles)scene.remove(p.mesh);projectiles=[];exitSlots();};
 
-let jumpEdge=false,actionMusic=false,stepAt=0;const music=new Audio();music.loop=true;let ac;const tracks={"13": "13. End of Match.mp3", "12": "12. Round MVP Anthem.mp3", "11": "11. Lost Round.mp3", "10": "10. Won Round.mp3", "9": "09. Death Cam.mp3", "8": "08. 10 Second Countdown-Bomb Countdown.mp3", "7": "07. Bomb Planted-Hostage Taken.mp3", "6": "06. Round Action 2.mp3", "5": "05. Round Action 1.mp3", "4": "04. Start of Match.mp3", "3": "03. Team Selection.mp3", "2": "02. Round Start.mp3", "1": "01. Main Menu.mp3"};function musicPlay(n){if(window.strikeIntroActive)return;if(n===9&&bomb36.planted&&!bomb36.winner)return;if(!tracks[n])return;music.pause();music.src=encodeURI('assets/audio/'+tracks[n]);music.loop=n===1;music.volume=Number($('musicVol').value)/100;if(!paused)music.play().catch(()=>{});}const voices=new Set(), aliases={"Glock-18":"glock18","USP-S":"usp","CZ75-Auto":"ots33","Dual Berettas":"m9","Desert Eagle":"deagle","Nova":"rem870","XM1014":"spas12","MP7":"mp7","MP9":"mp9","MP5-SD":"mp5","AWP":"l115a3","G3SG1":"g3a3","M4A4":"m4a1","M4A1-S":"m4a1","Galil AR":"ak101","PP-Bizon":"uzi","Negev":"m16","M249":"m16",AK47:'ak47',AK12:'ak74',AUG:'auga3',FAMAS:'famas',FAMMAS:'famas',AR15:'m16',AR70:'sg550','FN F2000':'auga3','FN SCAR':'scarl',L85A1:'l85',M16A1:'m16'};
+let jumpEdge=false,actionMusic=false,stepAt=0;const music=new Audio();music.loop=true;let ac;const tracks={"13": "13. End of Match.mp3", "12": "12. Round MVP Anthem.mp3", "11": "11. Lost Round.mp3", "10": "10. Won Round.mp3", "9": "09. Death Cam.mp3", "8": "08. 10 Second Countdown-Bomb Countdown.mp3", "7": "07. Bomb Planted-Hostage Taken.mp3", "6": "06. Round Action 2.mp3", "5": "05. Round Action 1.mp3", "4": "04. Start of Match.mp3", "3": "03. Team Selection.mp3", "2": "02. Round Start.mp3", "1": "01. Main Menu.mp3"};function musicPlay(n){if(window.strikeIntroActive&&!(n===1&&window.strikeIntroMusic))return;if(n===9&&bomb36.planted&&!bomb36.winner)return;if(!tracks[n])return;music.pause();music.src=encodeURI('assets/audio/'+tracks[n]);music.loop=n===1;music.volume=Number($('musicVol').value)/100;if(!paused)music.play().catch(()=>{});}const voices=new Set(), aliases={"Glock-18":"glock18","USP-S":"usp","CZ75-Auto":"ots33","Dual Berettas":"m9","Desert Eagle":"deagle","Nova":"rem870","XM1014":"spas12","MP7":"mp7","MP9":"mp9","MP5-SD":"mp5","AWP":"l115a3","G3SG1":"g3a3","M4A4":"m4a1","M4A1-S":"m4a1","Galil AR":"ak101","PP-Bizon":"uzi","Negev":"m16","M249":"m16",AK47:'ak47',AK12:'ak74',AUG:'auga3',FAMAS:'famas',FAMMAS:'famas',AR15:'m16',AR70:'sg550','FN F2000':'auga3','FN SCAR':'scarl',L85A1:'l85',M16A1:'m16'};
 function pool(group,pattern){return (sounds['sound/'+group]||[]).filter(x=>pattern.test(x.split('/').pop()));}
 const audioBuffers444=new Map();
 function unlockAudio119(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state!=='running')ac.resume().catch(()=>{});}catch{}}
@@ -490,7 +490,7 @@ function partsFrame48(obj,t){if(!obj)return;obj.traverse(m=>{if(m.name==='reload
 // 4.8.2: menu-only pose and independent knife model.
 let menuKnife482=null,menuKnifeLoading482=false;
 // 5.7: reference-driven entrance, knife inspection and relaxed idle.
-function menuTime57(root,now){if(root.userData.menuEpoch57===undefined)root.userData.menuEpoch57=now;return (now-root.userData.menuEpoch57)/1000;}
+function menuTime57(root,now){if(window.strikeIntroActive){root.userData.menuEpoch57=undefined;return 0;}if(root.userData.menuEpoch57===undefined)root.userData.menuEpoch57=now;return (now-root.userData.menuEpoch57)/1000;}
 function menuEase57(a,b,t){return T.MathUtils.smoothstep(t,a,b);}
 function menuMotion57(root,now){let t=menuTime57(root,now),e=menuEase57(0,1.65,t);root.position.x=1.65*(1-e);root.rotation.y=Math.PI-.55*(1-e)+.055*Math.sin(t*1.2)*e;root.position.y=(1-e)*.035*Math.abs(Math.sin(t*10));}
 function menuLift482(now){let t=menuActor47?menuTime57(menuActor47,now):0;return menuEase57(.55,1.65,t)*(1-menuEase57(2.65,3.85,t));}
@@ -849,6 +849,8 @@ function caseThumb125(id){if(caseCache125.has(id))return caseCache125.get(id);co
 function caseImage125(im,id){im.alt=skinLabel33(id);caseThumb125(id).then(src=>im.src=src).catch(e=>{console.warn('Case preview',e);im.alt=skinLabel33(id)+' — модель недоступна';});}
 
 // Startup video: begin the existing menu soundtrack only after the intro.
-function startMenu128(){if(!active&&!paused)musicPlay(1);}
-window.addEventListener("strike-intro-finished",startMenu128);
-if(!window.strikeIntroActive)startMenu128();
+let startupMusic129=false;
+function startMenu128(){if(!startupMusic129&&!active&&!paused){startupMusic129=true;musicPlay(1);}}
+window.addEventListener("strike-intro-music",startMenu128);
+window.addEventListener("strike-intro-finished",()=>{if(menuActor47)delete menuActor47.userData.menuEpoch57;startMenu128();});
+if(window.strikeIntroMusic||!window.strikeIntroActive)startMenu128();

@@ -21,4 +21,4 @@ function finish(){if(done)return;done=true;clearTimeout(timer);cancelAnimationFr
 function tick(){if(done)return;const t=v.currentTime;if(t>=4.50){cue();root.style.opacity=String(Math.max(0,1-(t-4.50)/.77));}frame=requestAnimationFrame(tick);}
 function play(){b.hidden=true;v.play().catch(()=>{if(!done)b.hidden=false;});}
 v.addEventListener('ended',finish);v.addEventListener('error',finish);v.addEventListener('playing',()=>{clearTimeout(timer);timer=setTimeout(finish,15000);cancelAnimationFrame(frame);tick();});b.addEventListener('click',e=>{e.stopPropagation();play();});for(const e of ['pointerdown','pointerup','touchend','click'])root.addEventListener(e,e=>e.stopPropagation());document.addEventListener('keydown',e=>{if(!done){e.stopImmediatePropagation();if(!b.hidden&&(e.key==='Enter'||e.key===' ')){e.preventDefault();play();}}},true);timer=setTimeout(()=>{if(v.readyState<2)finish();},15000);play();})();
-</script><script type="module" src="game.js?v=131"></script></html>
+</script><script type="module" src="game.js?v=132"></script></html>
